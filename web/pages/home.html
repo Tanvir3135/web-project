@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: #D4D4D4;">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Travel Blog</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" />
+  <style>
+    .img_card {
+      object-fit: cover;
+      max-height: 20em;
+    }
+
+    .card {
+      margin: 1em;
+    }
+  </style>
+</head>
+
+<body class="m-5 border rounded">
+  <header class="">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary rounded-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">EuropeTour Blog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+          aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/about">About</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <form class="form-inline my-2 my-lg-0 d-flex" id="searchForm">
+        <input class="form-control mr-sm-2" type="search" id="searchInput" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+    </nav>
+  </header>
+  <main class="">
+    <div style="position: relative;">
+      <img src="/images/coliseum.jpg" alt="coliseum" class="img-fluid"
+        style="width: 100%; height: 20em; object-fit: cover" />
+      <div
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; text-align: center;">
+        <div style="background-color: rgba(0, 0, 0, 0.5); padding: 3em; color: white; height: 100%; width: 100%;">
+          <h2>Exploring Europe's Charm</h2>
+          <p>From the mesmerizing streets of Paris to the enchanting canals of Venice, my journey through Europe has
+            been nothing short of magical.</p>
+          <p>Every corner I turned revealed a new adventure, a new story waiting to be told.</p>
+          <p>Join me as I recount the wonders of this timeless continent.</p>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="m-5" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+      <a href="/guides">
+        <div class="card" style="width: 18rem">
+          <img src="/images/street_lamp.jpg" class="card-img-top img_card" alt="..." />
+          <div class="card-body">
+            <h5 class="card-title">Belgium</h5>
+            <p class="card-text">The classic taste of autumn.</p>
+          </div>
+        </div>
+      </a>
+      <a href="/guides.html#swit-section">
+        <div class="card" style="width: 18rem">
+          <img src="/images/swiss_mountain.jpg" class="card-img-top img_card" alt="..." />
+          <div class="card-body">
+            <h5 class="card-title">Switzerland</h5>
+            <p class="card-text">Astonishing and breathtaking landscapes</p>
+          </div>
+        </div>
+        </a>
+    </div>
+    <div class="m-5 flex justify-content-center align-items-center card_section flex-wrap"
+      style="display: flex">
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Create New Post</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="postTitle" class="form-label">Title</label>
+              <input type="text" class="form-control" id="postTitle" required />
+            </div>
+            <div class="mb-3">
+              <label for="postDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="postDescription" rows="3" required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" onclick="createNewPost()">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script>
+
+    function onSendLikes(button, postId) {
+      fetch("/like", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userEmail: localStorage.getItem("userEmail"),
+          postId,
+        }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            const likeElement = document.getElementById(`card-${postId}-likes`)
+            let nLikes = Number(likeElement.innerText) + 1;
+            likeElement.innerText = nLikes;
+            button.disabled = true;
+          }
+        })
+        .catch((error) => alert("An error ocurred when sending the like"));
+    }
+
+    // Function to fetch posts from the database
+    async function fetchPosts() {
+      try {
+        // Fetch posts from the database
+        const response = await fetch("/posts");
+        if (!response.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const posts = await response.json();
+
+        // Render each post on the page
+        posts.forEach((post) => {
+          console.log(post);
+          const { id, title, body, user_email, likes, comments } = post;
+          const newCard = new Card(id, title, body, user_email, likes, comments);
+          newCard.render();
+        });
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    }
+
+    // Function to create a new post and render it on the page
+    async function createNewPost() {
+      const title = document.getElementById("postTitle").value;
+      const body = document.getElementById("postDescription").value;
+
+      try {
+        // Send the new post to be stored in the database
+        const response = await fetch("/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title, body, userEmail: localStorage.getItem("userEmail") }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to create new post");
+        }
+
+        // Retrieve the ID of the new post from the response
+        const { postId } = await response.json();
+
+        // Render the new post on the page
+        const newCard = new Card(postId, title, body, localStorage.getItem("userEmail"));
+        newCard.render();
+        window.location.href = "/home"
+      } catch (error) {
+        console.error("Error creating new post:", error);
+      }
+    }
+
+    // Fetch posts from the database when the page loads
+    window.addEventListener("load", fetchPosts);
+
+    class Card {
+
+      constructor(id, title, description, userEmail, likes = 0, comments) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.userEmail = userEmail; // Add userEmail property
+        this.likes = likes;
+        this.comments = comments
+      }
+
+      render() {
+        // Check if the current user is the author of the post
+        const currentUser = localStorage.getItem("userEmail");
+        const isAuthor = currentUser === this.userEmail;
+        const commentsHTML = generateCommentsHTML(this.comments);
+        console.log(this.comments);
+        console.log(commentsHTML);
+
+        // Create HTML for the new card
+        const newCardHTML = `
+      <div class="border-bottom" style="width: 100%; margin-bottom: 20px" id="card-${this.id}">
+        <div class="card-body ">
+          <h3 class="card-title">${this.title}</h3>
+          <p class="card-text">${this.description}</p>
+          <div style="display: flex;
+                  justify-content: space-between;">
+            <div class="buttons">
+            
+              <button class="btn btn-sm btn-secondary position-relative m-1" onclick="onSendLikes(this, ${this.id})">
+                <i class="fas fa-thumbs-up"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark" id="card-${this.id}-likes">
+                  ${this.likes}
+                </span>
+              </button>
+              ${isAuthor ? `<button class="btn btn-sm btn-secondary m-1" onclick="onEditPost(${this.id})">
+                <i class='fas fa-edit'></i>
+              </button>` : ''}
+              
+              ${isAuthor ? `<button class="btn btn-sm btn-danger m-1" onclick="onDeletePost(${this.id})"><i class="fa fa-trash" aria-hidden="true"></i></button>` : ''}
+            </div>
+            <div>
+              <p><i>${this.userEmail}</i></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment-section m-3">
+            <!-- Comment Box -->
+            <form id="commentForm-${this.id}">
+                <div class="mb-3">
+                    <label for="commentBody-${this.id}" class="form-label">Say something about this blog</label>
+                    <textarea class="form-control" id="commentBody-${this.id}" rows="3" required></textarea>
+                </div>
+                <button type="button" class="btn btn-sm btn-success" onclick="addComment(${this.id})">Submit</button>
+            </form>
+            <!-- End of Comment Box -->
+            
+            <!-- Comments Section -->
+            <div class="comments-${this.id}">
+              <p class="mt-2 mb-0" style="font-weight: bold" >All comments</p>
+              <div>
+                ${commentsHTML}
+              </div>  
+            </div>
+            <!-- End of Comments Section -->
+        </div>
+
+        <form id="editForm-${this.id}" style="display: none;">
+          <div class="mb-3">
+            <label for="editPostTitle-${this.id}" class="form-label">Title</label>
+            <input type="text" class="form-control" id="editPostTitle-${this.id}" required />
+          </div>
+          <div class="mb-3">
+            <label for="editPostDescription-${this.id}" class="form-label">Description</label>
+            <textarea class="form-control" id="editPostDescription-${this.id}" rows="3" required></textarea>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="updatePost(${this.id})">Save Changes</button>
+        </form>
+      </div>
+    `;
+        // Get the m-5 for post cards
+        const cardSection = document.querySelector(".card_section");
+
+        // Check if there are any existing post cards
+        const existingPostCards = cardSection.querySelectorAll(".card");
+        cardSection.insertAdjacentHTML("beforeend", newCardHTML);
+        // if (existingPostCards.length > 0) {
+        //   // Get the last post card element
+        //   const lastPostCard = existingPostCards[existingPostCards.length - 1];
+
+        //   // Insert the new card HTML after the last post card
+        //   lastPostCard.insertAdjacentHTML("beforeend", newCardHTML);
+        // } else {
+        //   // If there are no existing post cards, append the new card directly
+        //   cardSection.insertAdjacentHTML("beforeend", newCardHTML);
+        // }
+
+
+      }
+    }
+
+   
+    async function onDeletePost(postId) {
+      try {
+        const response = await fetch(`/posts/${postId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "user_email": localStorage.getItem("userEmail")
+          },
+        });
+
+        if (response.ok) {
+          // Remove the deleted card from the UI
+          const cardToRemove = document.getElementById(`card-${postId}`);
+          if (cardToRemove) {
+            cardToRemove.remove();
+          }
+        } else {
+          throw new Error("Failed to delete post");
+        }
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
+    }
+
+    async function addComment(postId) {
+      const comment = document.getElementById(`commentBody-${postId}`).value;
+      const commentSection = document.querySelector(`.comments-${postId}`);
+ 
+      try {
+        const response = await fetch(`/comments/${postId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ comment }),
+        });
+
+        // Check if the request was successful
+        if (!response.ok) {
+            throw new Error('Failed to add comment');
+        }
+
+        // Parse the response JSON
+        const comments = await response.json();
+        
+        // Displaying all the comments
+        const commentsHTML = generateCommentsHTML(comments);
+        commentSection.innerHTML = commentsHTML
+        console.log(commentsHTML)
+      } catch (error) {
+          console.log(error);
+      }
+    }
+    function generateCommentsHTML(comments) {
+        console.log(comments)
+        let commentsHTML = '';
+        if(comments?.length>0) {
+        comments.forEach(comment => {
+            commentsHTML = `
+                <div class="comment card border-0 mt-0 mb-3">
+                    <div class="card-body">
+                        <i class="fas fa-user"></i>
+                        <span>${comment.comment_body}</span>
+                    </div>
+                </div>
+            ` + commentsHTML;
+        });
+      }
+      console.log(commentsHTML);
+        return commentsHTML;
+    }
+
+    document.getElementById("searchForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      // Get the search query from the input field
+      const searchQuery = document.getElementById("searchInput").value;
+
+      // Send a request to the server with the search query
+      fetch(`/search?query=${searchQuery}`)
+          .then(response => response.json())
+          .then(data => {
+            document.querySelector('.card_section').innerHTML = ''
+            const posts  = data;
+            posts.forEach((post) => {
+              console.log(post);
+              const { id, title, body, user_email, likes, comments } = post;
+              const newCard = new Card(id, title, body, user_email, likes, comments);
+              newCard.render();
+            });
+            console.log(posts);
+
+              // Display the search results on the page
+              // displaySearchResults(data);
+          })
+          .catch(error => console.error("Error fetching search results:", error));
+    });
+
+    async function onEditPost(postId) {
+
+      const editForm = document.getElementById(`editForm-${postId}`);
+      editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+
+      try {
+        const post = await fetch(`posts/${postId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then(response => { return response.json() })
+
+        if (post) {
+          document.getElementById(`editPostTitle-${postId}`).value = post.title;
+          document.getElementById(`editPostDescription-${postId}`).value = post.body;
+        }
+      } catch (error) {
+
+      }
+
+    }
+
+    // Function to update a post
+    async function updatePost(postId) {
+      const title = document.getElementById(`editPostTitle-${postId}`).value;
+      const description = document.getElementById(`editPostDescription-${postId}`).value;
+
+      try {
+        const response = await fetch(`/posts/${postId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'user_email': localStorage.getItem('userEmail')
+          },
+          body: JSON.stringify({ title, description })
+        });
+
+        if (response.ok) {
+          window.location.href = '/home'
+        } else {
+          throw new Error('Failed to update post');
+        }
+      } catch (error) {
+        console.error('Error updating post:', error);
+      }
+    }
+
+    function onLogout() {
+      fetch("/logout", {
+        method: "POST"
+      })
+        .then((response) => {
+          if (response.ok) {
+            localStorage.clear()
+            window.location.href = "/";
+          } else {
+            console.error("Logout failed:", response.status);
+          }
+        })
+        .catch((error) => {
+          console.error("Error during logout:", error);
+        });
+    }
+
+
+    window.addEventListener('load', async () => {
+      try {
+        const response = await fetch('/checkSession');
+        const data = await response.json();
+        const navbarList = document.querySelector('.navbar-nav');
+
+        if (data.loggedIn) {
+          const newPostButton = document.createElement('li');
+          newPostButton.classList.add('nav-item');
+          newPostButton.innerHTML = `
+        <a class="nav-link" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" >New Post</a>
+      `;
+
+          const logoutButton = document.createElement('li');
+          logoutButton.classList.add('nav-item');
+          logoutButton.innerHTML = `
+        <a class="nav-link" onclick="onLogout()" href="/">Logout</a>
+      `;
+
+          navbarList.appendChild(logoutButton);
+          navbarList.appendChild(newPostButton);
+        } else {
+          const loginButton = document.createElement('li');
+          loginButton.classList.add('nav-item');
+          loginButton.innerHTML = `
+        <a class="nav-link" href="/login">Login</a>
+      `;
+          navbarList.appendChild(loginButton);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      }
+    });
+
+  </script>
+</body>
+
+</html>
